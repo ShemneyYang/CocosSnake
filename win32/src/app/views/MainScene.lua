@@ -12,7 +12,7 @@ end
 function MainScene:onStartClicked()
 	print("start")
 	--切换到开始游戏场景.
-	local scene = require("app.views.GamePlayingScene"):create(self.app_,"GamePlayingScene")
+	local scene = require("GamePlayingScene"):create(self.app_,"GamePlayingScene")
     scene:showWithScene()
 end
 	
