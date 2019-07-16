@@ -20,6 +20,14 @@ end
 function GamePlayingScene:onEnter()
     print("GamePlayingScene:onEnter")
     self.snake = Snake.new(self)
+
+    local scheduler=cc.Director:getInstance():getScheduler()
+    scheduler:scheduleScriptFunc(handler(self, self.timeout), 0.1, false)
+    return scheduler
+end
+
+function GamePlayingScene:timeout()
+    self.snake:move()
 end
 
 return GamePlayingScene

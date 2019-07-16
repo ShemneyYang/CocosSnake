@@ -1,6 +1,3 @@
---region *.lua
---Date
---此文件由[BabeLua]插件自动生成
 local GridSize = 22 --每一格多少像素
 local ScaleRate = 1/display.contentScaleFactor
 
@@ -20,4 +17,3 @@ function CommonUtility:getPos(x, y)
 end
 
 return CommonUtility
---endregion

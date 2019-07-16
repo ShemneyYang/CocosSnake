@@ -13,6 +13,7 @@ function Snake:ctor(node)
     self:grow(false)
 end
 
+--长长一节身体
 function Snake:grow(isHead)
     local x, y = self:getTailCoordinate()
 
@@ -31,6 +32,7 @@ function Snake:grow(isHead)
     table.insert(self.bodyArray, body)
 end
 
+--获取尾部坐标
 function Snake:getTailCoordinate()
     if #self.bodyArray == 0 then
         return 0, 0
@@ -40,11 +42,13 @@ function Snake:getTailCoordinate()
     end
 end
 
+--向前移动一步
 function Snake:move()
+    --从队尾开始循环
     for i=#self.bodyArray, 1, -1 do
         if i == 1 then
             local body = self.bodyArray[i]
-            moveHead(body)
+            body.x, body.y = self:moveHead(body)
             body:update()
         else
             local frontBody = self.bodyArray[i - 1]
@@ -55,6 +59,7 @@ function Snake:move()
     end
 end
 
+--根据方向移动头部
 function Snake:moveHead(body)
     if self.moveDirection == "left" then
         return body.x-1, body.y
