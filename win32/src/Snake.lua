@@ -35,7 +35,7 @@ function Snake:getTailCoordinate()
     if #self.bodyArray == 0 then
         return 0, 0
     else
-        local body =  self.bodyArray[#self.bodyArray]
+        local body = self.bodyArray[#self.bodyArray]
         return body.x, body.y
     end
 end

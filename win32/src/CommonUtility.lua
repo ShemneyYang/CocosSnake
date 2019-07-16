@@ -14,7 +14,7 @@ function CommonUtility:getPos(x, y)
     local origin = cc.Director:getInstance():getVisibleOrigin()
 
     local posX = origin.x + visibleSize.width / 2 + x * GridSize * ScaleRate
-    local posY = origin.y + visibleSize.height / 2 + x * GridSize * ScaleRate
+    local posY = origin.y + visibleSize.height / 2 + y * GridSize * ScaleRate
 
     return posX, posY
 end
