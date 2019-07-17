@@ -1,25 +1,16 @@
 local Snake = require("Snake")
+local FrogFactory = require("FrogFactory")
 
 local GamePlayingScene = class("GamePlayingScene", cc.load("mvc").ViewBase)
 
 function GamePlayingScene:onCreate()
---[[
-    -- add background image
-    print("GamePlayingScene:onCreate")
-    display.newSprite("HelloWorld.png")
-        :move(display.center)
-        :addTo(self)
 
-    -- add HelloWorld label
-    cc.Label:createWithSystemFont("Hello World, GamePlayingScene", "Arial", 40)
-        :move(display.cx, display.cy + 200)
-        :addTo(self)
-]]
 end
 
 function GamePlayingScene:onEnter()
     print("GamePlayingScene:onEnter")
     self.snake = Snake.new(self)
+    self.frogFactory = FrogFactory.new(self, 5)
 
     local listener = cc.EventListenerKeyboard:create()
     listener:registerScriptHandler(handler(self, self.onKeyPressed), cc.Handler.EVENT_KEYBOARD_PRESSED)
@@ -27,7 +18,7 @@ function GamePlayingScene:onEnter()
     cc.Director:getInstance():getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 
     local scheduler=cc.Director:getInstance():getScheduler()
-    scheduler:scheduleScriptFunc(handler(self, self.timeout), 1, false)
+    scheduler:scheduleScriptFunc(handler(self, self.timeout), 0.2, false)
     return scheduler
 end
 

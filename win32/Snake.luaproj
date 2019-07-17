@@ -108,6 +108,8 @@
     <Compile Include="src\cocos\ui\GuiConstants.lua" />
     <Compile Include="src\CommonUtility.lua" />
     <Compile Include="src\config.lua" />
+    <Compile Include="src\Frog.lua" />
+    <Compile Include="src\FrogFactory.lua" />
     <Compile Include="src\main.lua" />
     <Compile Include="src\packages\mvc\AppBase.lua" />
     <Compile Include="src\packages\mvc\init.lua" />
