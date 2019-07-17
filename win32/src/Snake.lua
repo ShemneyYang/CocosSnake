@@ -2,6 +2,8 @@ local Snake = class("Snake")
 
 local SnakeBody = require("SnakeBody")
 
+local DirectionClass = {["left"] = 0, ["right"] = 0, ["up"] = 1, ["down"] = 1}
+
 function Snake:ctor(node)
     self.bodyArray = {}
     self.node = node
@@ -11,6 +13,23 @@ function Snake:ctor(node)
     self:grow(true)
     self:grow(false)
     self:grow(false)
+    self:grow(false)
+    self:grow(false)
+end
+
+function Snake:setMoveDirection(dir)
+    if(DirectionClass[self.moveDirection] == DirectionClass[dir]) then
+        return
+    end
+
+    self.moveDirection = dir
+    
+    if(#self.bodyArray == 0) then
+        return
+    end
+
+    local head = self.bodyArray[1]
+    head:setDirection(dir)
 end
 
 --长长一节身体
@@ -54,6 +73,7 @@ function Snake:move()
             local frontBody = self.bodyArray[i - 1]
             local body = self.bodyArray[i]
             body.x, body.y = frontBody.x, frontBody.y
+            body:setDirection(frontBody.direction)
             body:update()
         end
     end
