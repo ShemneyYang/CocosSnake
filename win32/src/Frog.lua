@@ -14,4 +14,10 @@ function Frog:ctor(node, x, y)
     self.node:addChild(self.sprite)
 end
 
+function Frog:delete()
+    print("Frog:delete")
+    self.node:removeChild(self.sprite)
+    self.sprite = nil
+end
+
 return Frog

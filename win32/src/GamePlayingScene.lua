@@ -24,6 +24,15 @@ end
 
 function GamePlayingScene:timeout()
     self.snake:move()
+
+    --处理吃青蛙过程.
+    local frog = self.frogFactory:checkOnFrogs(self.snake:getHeadCoordinate())
+    if(frog == nil) then
+        return
+    end
+    print("eat one frog!!!")
+    self.frogFactory:removeFrog(frog)
+    self.snake:grow()
 end
 
 function GamePlayingScene:onKeyPressed(keyCode, event)

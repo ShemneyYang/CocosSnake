@@ -20,8 +20,8 @@ function CommonUtility:getRandomCoordinates()
     math.randomseed(cc.exports.randomSeed)
     cc.exports.randomSeed = cc.exports.randomSeed + 1
     local visibleSize = cc.Director:getInstance():getVisibleSize()
-    local nBoundX = math.modf(visibleSize.width / 2 / GridSize)
-    local nBoundY = math.modf(visibleSize.height / 2 / GridSize)
+    local nBoundX = math.modf(visibleSize.width / 2 / GridSize) - 1
+    local nBoundY = math.modf(visibleSize.height / 2 / GridSize) - 1
     return math.random(-nBoundX, nBoundX), math.random(-nBoundY, nBoundY)
 end
 

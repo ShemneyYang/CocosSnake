@@ -51,6 +51,16 @@ function Snake:grow(isHead)
     table.insert(self.bodyArray, body)
 end
 
+--获取头部坐标
+function Snake:getHeadCoordinate()
+    if #self.bodyArray == 0 then
+        return 0, 0
+    else
+        local body = self.bodyArray[1]
+        return body.x, body.y
+    end
+end
+
 --获取尾部坐标
 function Snake:getTailCoordinate()
     if #self.bodyArray == 0 then
