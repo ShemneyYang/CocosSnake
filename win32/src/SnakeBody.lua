@@ -3,19 +3,19 @@ local SnakeBody = class("SnakeBody")
 
 local DirectionRotation = {["left"] = 0, ["right"] = 180, ["up"] = 90, ["down"] = 270}
 
-function SnakeBody:ctor(snake,x,y,node,isHead)
+function SnakeBody:ctor(snake,x,y,node,isHead,direction)
     self.snake = snake
     self.x = x
     self.y = y
-    self.direction = "left"
 
     local bodyImage = "body.png"
     if isHead then
         bodyImage = "Head.png"
     end
     self.sprite = cc.Sprite:create(bodyImage)
-    self.sprite:addTo(node)
+    self:setDirection(direction)
     self:update()
+    self.sprite:addTo(node)
 end
 
 function SnakeBody:setDirection(dir)

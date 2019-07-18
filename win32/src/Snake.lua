@@ -35,19 +35,19 @@ end
 --长长一节身体
 function Snake:grow(isHead)
     local x, y = self:getTailCoordinate()
+    local direction = self:getTailDirection()
 
-     if self.moveDirection == "left" then
+     if direction == "left" then
         x = x + 1
-    elseif self.moveDirection == "right" then
+    elseif direction == "right" then
         x = x - 1
-    elseif self.moveDirection == "up" then
+    elseif direction == "up" then
         y = y - 1
-    elseif self.moveDirection == "down" then
+    elseif direction == "down" then
         y = y + 1
     end
 
-    local body = SnakeBody.new(self, x, y, self.node, isHead)
-    body:update()
+    local body = SnakeBody.new(self, x, y, self.node, isHead, direction)
     table.insert(self.bodyArray, body)
 end
 
@@ -68,6 +68,16 @@ function Snake:getTailCoordinate()
     else
         local body = self.bodyArray[#self.bodyArray]
         return body.x, body.y
+    end
+end
+
+--获取尾部方向
+function Snake:getTailDirection()
+    if #self.bodyArray == 0 then
+        return "left"
+    else
+        local body = self.bodyArray[#self.bodyArray]
+        return body.direction
     end
 end
 
