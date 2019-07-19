@@ -25,6 +25,8 @@ function MainScene:onCreate()
 	-- 开始游戏按钮.
     createNormalBtn(self,"startBtn.png","startBtn_selected.png","startBtn_disable.png", display.center,
 		handler(self, self.onStartClicked))
+
+    cc.SpriteFrameCache:getInstance():addSpriteFrames("common.plist")
 end
 
 return MainScene

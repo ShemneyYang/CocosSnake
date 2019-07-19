@@ -7,15 +7,35 @@ function SnakeBody:ctor(snake,x,y,node,isHead,direction)
     self.snake = snake
     self.x = x
     self.y = y
+    self.isHead = isHead
 
-    local bodyImage = "body.png"
-    if isHead then
-        bodyImage = "Head.png"
+    local bodyImage = "body1.png"
+    if self.isHead then
+        bodyImage = "Head1.png"
     end
-    self.sprite = cc.Sprite:create(bodyImage)
+    self.sprite = cc.Sprite:createWithSpriteFrameName(bodyImage)
     self:setDirection(direction)
     self:update()
     self.sprite:addTo(node)
+    self:startAnimation()
+end
+
+function SnakeBody:startAnimation()
+    if(self.isHead) then
+        return
+    end
+
+    local frameList = {}
+    for i = 1, 2, 1 do
+        local str = string.format("body%d.png", i)
+        local frame = cc.SpriteFrameCache:getInstance():getSpriteFrame(str)
+        table.insert(frameList, frame)
+    end
+    local frame = cc.SpriteFrameCache:getInstance():getSpriteFrame("body1.png")
+    table.insert(frameList, frame)
+    local animation = cc.Animation:createWithSpriteFrames(frameList, 0.1, 6)
+    local animate = cc.Animate:create(animation)
+    self.sprite:runAction(animate);
 end
 
 function SnakeBody:setDirection(dir)
