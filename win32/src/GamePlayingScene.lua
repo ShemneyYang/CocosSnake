@@ -4,13 +4,15 @@ local FrogFactory = require("FrogFactory")
 local GamePlayingScene = class("GamePlayingScene", cc.load("mvc").ViewBase)
 
 function GamePlayingScene:onCreate()
-
+    self.leftTimerID = 0
+    self.rightTimerID = 0
+    cc.SpriteFrameCache:getInstance():addSpriteFrames("common.plist")
 end
 
 function GamePlayingScene:onEnter()
     print("GamePlayingScene:onEnter")
     self.snake = Snake.new(self)
-    self.frogFactory = FrogFactory.new(self, 5)
+    --self.frogFactory = FrogFactory.new(self, 5)
 
     local listener = cc.EventListenerKeyboard:create()
     listener:registerScriptHandler(handler(self, self.onKeyPressed), cc.Handler.EVENT_KEYBOARD_PRESSED)
@@ -18,13 +20,12 @@ function GamePlayingScene:onEnter()
     cc.Director:getInstance():getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 
     local scheduler=cc.Director:getInstance():getScheduler()
-    scheduler:scheduleScriptFunc(handler(self, self.timeout), 0.2, false)
-    return scheduler
+    scheduler:scheduleScriptFunc(handler(self, self.timeout), 0.01, false)
 end
 
 function GamePlayingScene:timeout()
     self.snake:move()
-
+    --[[
     --处理吃青蛙过程.
     local frog = self.frogFactory:checkOnFrogs(self.snake:getHeadCoordinate())
     if(frog == nil) then
@@ -32,19 +33,32 @@ function GamePlayingScene:timeout()
     end
     print("eat one frog!!!")
     self.frogFactory:removeFrog(frog)
-    self.snake:grow()
+    self.snake:grow()]]
+end
+
+function GamePlayingScene:onKeyLeftTimeout()
+    self.snake:setMoveDirection(-5)
+end
+
+function GamePlayingScene:onKeyRightTimeout()
+    self.snake:setMoveDirection(5)
 end
 
 function GamePlayingScene:onKeyPressed(keyCode, event)
     if(keyCode == 28) then
         print("pressed up!!!")
-        self.snake:setMoveDirection("up")
+        --self.snake:setMoveDirection("up")
     elseif (keyCode == 29) then
-        self.snake:setMoveDirection("down")
+        --self.snake:setMoveDirection("down")
     elseif (keyCode == 26) then
-        self.snake:setMoveDirection("left")
+        --left
+        --self.snake:setMoveDirection(-10)
+        local scheduler=cc.Director:getInstance():getScheduler()
+        self.leftTimerID = scheduler:scheduleScriptFunc(handler(self, self.onKeyLeftTimeout), 0.02, false)
     elseif (keyCode == 27) then
-        self.snake:setMoveDirection("right")
+        --right
+        local scheduler=cc.Director:getInstance():getScheduler()
+        self.rightTimerID = scheduler:scheduleScriptFunc(handler(self, self.onKeyRightTimeout), 0.02, false)
     else
         print("pressed unkown!!!")
     end
@@ -52,6 +66,17 @@ end
 
 function GamePlayingScene:onKeyReleased(keyCode, event)
     print("key released code=", keyCode)
+    if(self.leftTimerID ~= 0) then
+          local scheduler=cc.Director:getInstance():getScheduler()
+          scheduler:unscheduleScriptEntry(self.leftTimerID)
+          self.leftTimerID = 0
+    end
+
+    if(self.rightTimerID ~= 0) then
+          local scheduler=cc.Director:getInstance():getScheduler()
+          scheduler:unscheduleScriptEntry(self.rightTimerID)
+          self.rightTimerID = 0
+    end
 end
 
 return GamePlayingScene

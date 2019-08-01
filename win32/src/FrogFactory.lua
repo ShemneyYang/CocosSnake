@@ -1,3 +1,5 @@
+--«‡Õ‹π§≥ß
+
 local CommonUtility = require("CommonUtility")
 local Frog = require("Frog")
 
@@ -12,7 +14,7 @@ end
 
 function FrogFactory:createFrogs()
     for i = 1, #self.fragArray do
-        self.fragArray[i]:delete()
+        self.fragArray[i]:destroy()
     end
     self.fragArray = {}
     for i = 1, self.fragMaxNumber do
@@ -27,7 +29,7 @@ function FrogFactory:removeFrog(frog)
     for i = 1, #self.fragArray do
         if(frog == self.fragArray[i]) then
             table.remove(self.fragArray, i)
-            frog:delete()
+            frog:destroy()
             if(#self.fragArray == 0) then
                 self:createFrogs()
             end
@@ -38,7 +40,7 @@ function FrogFactory:removeFrog(frog)
 end
 
 function FrogFactory:checkOnFrogs(x, y)
-    print("checkOnFrogs x=", x , ",y=", y)
+    --print("checkOnFrogs x=", x , ",y=", y)
     for i = 1, #self.fragArray do
         local frog = self.fragArray[i]
         if(x == frog.x and y == frog.y) then

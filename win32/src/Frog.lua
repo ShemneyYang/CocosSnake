@@ -1,17 +1,15 @@
 
 local CommonUtility = require("CommonUtility")
+local Object = require("Object")
 
-local Frog = class("Frog")
+local Frog = class("Frog", Object)
 
 function Frog:ctor(node, x, y)
-    self.x = x
-    self.y = y
-    self.node = node
-    self.sprite = cc.Sprite:createWithSpriteFrameName("frog2.png")
-    self.sprite:setScale(0.5)
-    local posX, posY = CommonUtility:getPos(x, y)
-    self.sprite:setPosition(posX, posY)
-    self.node:addChild(self.sprite)
+    Frog.super.ctor(self, node)
+    self.name = "Frog"
+    Frog.super.createWithSpriteFrameName(self, "frog2.png")
+    Frog.super.setPos(self, x, y);
+    Frog.super.show(self);
     self:startAnimation()
 end
 
@@ -28,12 +26,6 @@ function Frog:startAnimation()
     local animation = cc.Animation:createWithSpriteFrames(frameList, 0.5, 2)
     local animate = cc.Animate:create(animation)
     self.sprite:runAction(animate);
-end
-
-function Frog:delete()
-    print("Frog:delete")
-    self.node:removeChild(self.sprite)
-    self.sprite = nil
 end
 
 return Frog

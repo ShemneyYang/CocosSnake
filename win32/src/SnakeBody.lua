@@ -1,23 +1,22 @@
+--ÉßÉí½Úµã
 local CommonUtility = require("CommonUtility")
-local SnakeBody = class("SnakeBody")
+local Object = require("Object")
 
 local DirectionRotation = {["left"] = 0, ["right"] = 180, ["up"] = 90, ["down"] = 270}
 
-function SnakeBody:ctor(snake,x,y,node,isHead,direction)
+local SnakeBody = class("SnakeBody", Object)
+
+function SnakeBody:ctor(snake, node, isHead, direction)
+    SnakeBody.super.ctor(self, node)
+    self.name = "SnakeBody"
     self.snake = snake
-    self.x = x
-    self.y = y
     self.isHead = isHead
 
     local bodyImage = "body1.png"
     if self.isHead then
         bodyImage = "Head1.png"
     end
-    self.sprite = cc.Sprite:createWithSpriteFrameName(bodyImage)
-    self:setDirection(direction)
-    self:update()
-    self.sprite:addTo(node)
-    self:startAnimation()
+    SnakeBody.super.createWithSpriteFrameName(self, bodyImage)
 end
 
 function SnakeBody:startAnimation()
@@ -39,18 +38,9 @@ function SnakeBody:startAnimation()
 end
 
 function SnakeBody:setDirection(dir)
+    --[[
     self.direction = dir
-    self.sprite:setRotation(DirectionRotation[dir])
-end
-
-function SnakeBody:getCoordinate()
-    return self.x, self.y
-end
-
-function SnakeBody:update()
-    local posX, posY = CommonUtility:getPos(self.x, self.y)
-    --print("posX=", posX, ",posY=", posY)
-    self.sprite:setPosition(posX, posY)
+    self.sprite:setRotation(DirectionRotation[dir])]]
 end
 
 return SnakeBody

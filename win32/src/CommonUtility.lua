@@ -1,9 +1,17 @@
-local GridSize = 22 --每一格多少像素
+local GridSize = 1 --每一格多少像素
 local ScaleRate = 1/display.contentScaleFactor
 
 local CommonUtility = class("CommonUtility")
 
 function CommonUtility:ctor()
+end
+
+function CommonUtility:getCenterPos()
+    local visibleSize = cc.Director:getInstance():getVisibleSize()
+    local origin = cc.Director:getInstance():getVisibleOrigin()
+    local posX = origin.x + visibleSize.width / 2
+    local posY = origin.y + visibleSize.height / 2
+    return posX, posY
 end
 
 function CommonUtility:getPos(x, y)
