@@ -6,21 +6,28 @@ local DirectionRotation = {["left"] = 0, ["right"] = 180, ["up"] = 90, ["down"] 
 
 local SnakeBody = class("SnakeBody", Object)
 
-function SnakeBody:ctor(snake, node, isHead, direction)
+function SnakeBody:ctor(snake, node, index)
     SnakeBody.super.ctor(self, node)
     self.name = "SnakeBody"
     self.snake = snake
-    self.isHead = isHead
+    self.index = index
 
-    local bodyImage = "body1.png"
-    if self.isHead then
-        bodyImage = "Head1.png"
+    local n = index % 5
+    if(n == 0) then
+        n = 5
     end
+    local bodyImage = ""
+    if self.index <= 5 then
+        bodyImage = string.format("Head1_%d.png", n)
+    else
+        bodyImage = string.format("body1_%d.png", n)
+    end
+    --print("bodyImage=", bodyImage)
     SnakeBody.super.createWithSpriteFrameName(self, bodyImage)
 end
 
 function SnakeBody:startAnimation()
-    if(self.isHead) then
+    if(self.index == 1) then
         return
     end
 

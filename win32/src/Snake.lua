@@ -2,28 +2,28 @@ local Snake = class("Snake")
 
 local CommonUtility = require("CommonUtility")
 local SnakeBody = require("SnakeBody")
-local DirectionClass = {["left"] = 0, ["right"] = 0, ["up"] = 1, ["down"] = 1}
 
 function Snake:ctor(node)
     self.bodyArray = {}
     self.node = node
     self.moveDirection = "left"
-    self.step = 2  --每一步多少像素
+    self.step = 4  --每一步多少像素
     self.speed = 1 --速度正常是1，实际每一步移动的距离为self.step * self.speed
+    self.maxSpeed = 5 --最大速度
+    self.acceleratedEnergy = 100 --加速能量条.
+    self.acceleratedTimerID = 0
+    self.restoreTimerID = 0
+    self.consumeTimerID = 0
+    self.moveTimerID = 0
+    self.moveTimerInterval = 0.05
 
     --初始化三节身体.
-    self:grow(true)
-    --self:grow(false)
+    for i = 1, 100 do
+        self:grow()
+    end
 end
 
-function Snake:setMoveDirection(dir)
---[[
-    if(DirectionClass[self.moveDirection] == DirectionClass[dir]) then
-        return
-    end
-
-    self.moveDirection = dir
-    ]]
+function Snake:turnRotation(dir)
     if(#self.bodyArray == 0) then
         return
     end
@@ -32,15 +32,22 @@ function Snake:setMoveDirection(dir)
     head:turnRotation(dir)
 end
 
+function Snake:createHead()
+    for i = 1, 5 do
+        self:grow()
+    end
+end
+
 --长长一节身体
-function Snake:grow(isHead)
+function Snake:grow()
     local x, y, tailWidth, tailHeight = self:getTailPos()
-    local direction = self:getTailDirection()
-    local body = SnakeBody.new(self, self.node, isHead, direction)
+    --print("tailPos x=", x, ",y=", y, ",w=", tailWidth, ",h=", tailHeight)
+    local body = SnakeBody.new(self, self.node, #self.bodyArray + 1)
     table.insert(self.bodyArray, body)
     local width, height = body:getSize()
 
     --精灵默认锚点是中心, 要特殊处理一下.
+    --[[
     if direction == "left" then
         x = x + (width/2) + (tailWidth/2)
     elseif direction == "right" then
@@ -50,12 +57,13 @@ function Snake:grow(isHead)
     elseif direction == "down" then
         y = y + (height/2) + (tailHeight/2)
     end
-
-    print("pos x=", x, ",y=", y)
+    ]]
+    --todo.
+    x = x + (width/2) + (tailWidth/2)
+    --print("pos x=", x, ",y=", y)
     body:setPos(x, y)
-    body:setDirection(direction)
     body:show()
-    body:startAnimation()
+    --body:startAnimation()
 end
 
 --获取头部坐标
@@ -90,6 +98,23 @@ function Snake:getTailDirection()
     end
 end
 
+--开始移动定时器
+function Snake:startMove()
+    local scheduler=cc.Director:getInstance():getScheduler()
+    self.moveTimerID = scheduler:scheduleScriptFunc(handler(self, self.onMoveTimerout), self.moveTimerInterval, false)
+end
+
+--结束移动定时器
+function Snake:stopMove()
+    local scheduler=cc.Director:getInstance():getScheduler()
+    scheduler:unscheduleScriptEntry(self.moveTimerID)
+    self.moveTimerID = 0
+end
+
+function Snake:onMoveTimerout()
+    self:move()
+end
+
 --向前移动一步
 function Snake:move()
     --从队尾开始循环
@@ -105,16 +130,110 @@ function Snake:move()
     end
 end
 
---根据方向移动头部
-function Snake:moveHead(body)
-    if self.moveDirection == "left" then
-        return body.x-self.step, body.y
-    elseif self.moveDirection == "right" then
-        return body.x+self.step, body.y
-    elseif self.moveDirection == "up" then
-        return body.x, body.y+self.step
-    elseif self.moveDirection == "down" then
-        return body.x, body.y-self.step
+--开始加速
+function Snake:startAccelerate()
+    if(self.acceleratedTimerID ~= 0) then
+        return
+    end
+    local scheduler=cc.Director:getInstance():getScheduler()
+    self.acceleratedTimerID = scheduler:scheduleScriptFunc(handler(self, self.onAcceleratedTimeout), 0.2, false)
+
+    --加速同时开始消耗能量,并且停止恢复能量.
+    self:startConsumeEnergy()
+    self:stopRestoreAcceleratedEnergy()
+end
+
+--结束加速
+function Snake:stopAccelerate()
+    if(self.acceleratedTimerID == 0) then
+        return
+    end
+    local scheduler=cc.Director:getInstance():getScheduler()
+    scheduler:unscheduleScriptEntry(self.acceleratedTimerID)
+    self.acceleratedTimerID = 0
+    
+    self.moveTimerInterval = 0.05
+    self:stopMove()
+    self:startMove()
+
+    --结束加速时，开始恢复.
+    self:startRestoreAcceleratedEnergy()
+    self:stopConsumeEnergy()
+end
+
+function Snake:onAcceleratedTimeout()
+    if(self.acceleratedEnergy <= 0) then
+        --没有能量了，结束加速.
+        self:stopAccelerate()
+    end
+    if(self.moveTimerInterval <= 0.001) then
+        return
+    end
+
+    self.moveTimerInterval = self.moveTimerInterval - 0.01
+    self:stopMove()
+    self:startMove()
+end
+
+--开始恢复加速能量
+function Snake:startRestoreAcceleratedEnergy()
+    if(self.restoreTimerID ~= 0) then
+        return
+    end
+    local scheduler=cc.Director:getInstance():getScheduler()
+    self.restoreTimerID = scheduler:scheduleScriptFunc(handler(self, self.onRestoreAcceleratedEnergyTimeout), 0.5, false)
+end
+
+--结束恢复加速能量
+function Snake:stopRestoreAcceleratedEnergy()
+    if(self.restoreTimerID == 0) then
+        return
+    end
+    local scheduler=cc.Director:getInstance():getScheduler()
+    scheduler:unscheduleScriptEntry(self.restoreTimerID)
+    self.restoreTimerID = 0
+end
+
+function Snake:onRestoreAcceleratedEnergyTimeout()
+    if(self.acceleratedEnergy >= 100) then
+        self:stopRestoreAcceleratedEnergy()
+        return
+    end
+
+    self.acceleratedEnergy = self.acceleratedEnergy + 5
+    if(self.acceleratedEnergy > 100) then
+        self.acceleratedEnergy = 100
+    end
+end
+
+--开始消耗能量
+function Snake:startConsumeEnergy()
+    if(self.consumeTimerID ~= 0) then
+        return
+    end
+    local scheduler = cc.Director:getInstance():getScheduler()
+    self.consumeTimerID = scheduler:scheduleScriptFunc(handler(self, self.onConsumeEnergyTimeout), 0.5, false)
+end
+
+--结束消耗能量
+function Snake:stopConsumeEnergy()
+    if(self.consumeTimerID == 0) then
+        return
+    end
+    local scheduler=cc.Director:getInstance():getScheduler()
+    scheduler:unscheduleScriptEntry(self.consumeTimerID)
+    self.consumeTimerID = 0
+end
+
+function Snake:onConsumeEnergyTimeout()
+    if(self.acceleratedEnergy <= 0) then
+        self:stopConsumeEnergy()
+        return
+    end
+
+    self.acceleratedEnergy = self.acceleratedEnergy - 5
+    if(self.acceleratedEnergy < 0) then
+        self.acceleratedEnergy = 0
     end
 end
 

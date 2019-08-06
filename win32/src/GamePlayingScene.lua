@@ -12,6 +12,7 @@ end
 function GamePlayingScene:onEnter()
     print("GamePlayingScene:onEnter")
     self.snake = Snake.new(self)
+    self.snake:startMove()
     --self.frogFactory = FrogFactory.new(self, 5)
 
     local listener = cc.EventListenerKeyboard:create()
@@ -20,11 +21,13 @@ function GamePlayingScene:onEnter()
     cc.Director:getInstance():getEventDispatcher():addEventListenerWithSceneGraphPriority(listener, self)
 
     local scheduler=cc.Director:getInstance():getScheduler()
-    scheduler:scheduleScriptFunc(handler(self, self.timeout), 0.01, false)
+    scheduler:scheduleScriptFunc(handler(self, self.timeout), 0.05, false)
+
+
 end
 
 function GamePlayingScene:timeout()
-    self.snake:move()
+    --self.snake:move()
     --[[
     --处理吃青蛙过程.
     local frog = self.frogFactory:checkOnFrogs(self.snake:getHeadCoordinate())
@@ -37,28 +40,29 @@ function GamePlayingScene:timeout()
 end
 
 function GamePlayingScene:onKeyLeftTimeout()
-    self.snake:setMoveDirection(-5)
+    self.snake:turnRotation(-3)
 end
 
 function GamePlayingScene:onKeyRightTimeout()
-    self.snake:setMoveDirection(5)
+    self.snake:turnRotation(3)
 end
 
 function GamePlayingScene:onKeyPressed(keyCode, event)
     if(keyCode == 28) then
         print("pressed up!!!")
         --self.snake:setMoveDirection("up")
+        self.snake:startAccelerate()
     elseif (keyCode == 29) then
         --self.snake:setMoveDirection("down")
     elseif (keyCode == 26) then
         --left
         --self.snake:setMoveDirection(-10)
         local scheduler=cc.Director:getInstance():getScheduler()
-        self.leftTimerID = scheduler:scheduleScriptFunc(handler(self, self.onKeyLeftTimeout), 0.02, false)
+        self.leftTimerID = scheduler:scheduleScriptFunc(handler(self, self.onKeyLeftTimeout), 0.01, false)
     elseif (keyCode == 27) then
         --right
         local scheduler=cc.Director:getInstance():getScheduler()
-        self.rightTimerID = scheduler:scheduleScriptFunc(handler(self, self.onKeyRightTimeout), 0.02, false)
+        self.rightTimerID = scheduler:scheduleScriptFunc(handler(self, self.onKeyRightTimeout), 0.01, false)
     else
         print("pressed unkown!!!")
     end
@@ -66,6 +70,13 @@ end
 
 function GamePlayingScene:onKeyReleased(keyCode, event)
     print("key released code=", keyCode)
+    
+    if(keyCode == 28) then
+        print("pressed up to stopAccelerate!!!")
+        --self.snake:setMoveDirection("up")
+        self.snake:stopAccelerate()
+    end
+
     if(self.leftTimerID ~= 0) then
           local scheduler=cc.Director:getInstance():getScheduler()
           scheduler:unscheduleScriptEntry(self.leftTimerID)
