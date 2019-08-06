@@ -22,8 +22,6 @@ function GamePlayingScene:onEnter()
 
     local scheduler=cc.Director:getInstance():getScheduler()
     scheduler:scheduleScriptFunc(handler(self, self.timeout), 0.05, false)
-
-
 end
 
 function GamePlayingScene:timeout()

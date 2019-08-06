@@ -135,6 +135,8 @@ function Snake:startAccelerate()
     if(self.acceleratedTimerID ~= 0) then
         return
     end
+
+    print("start accelerate!!!!")
     local scheduler=cc.Director:getInstance():getScheduler()
     self.acceleratedTimerID = scheduler:scheduleScriptFunc(handler(self, self.onAcceleratedTimeout), 0.2, false)
 
@@ -148,6 +150,8 @@ function Snake:stopAccelerate()
     if(self.acceleratedTimerID == 0) then
         return
     end
+
+    print("stop accelerate!!!!")
     local scheduler=cc.Director:getInstance():getScheduler()
     scheduler:unscheduleScriptEntry(self.acceleratedTimerID)
     self.acceleratedTimerID = 0
@@ -180,6 +184,8 @@ function Snake:startRestoreAcceleratedEnergy()
     if(self.restoreTimerID ~= 0) then
         return
     end
+
+    print("start restore energy!!!!")
     local scheduler=cc.Director:getInstance():getScheduler()
     self.restoreTimerID = scheduler:scheduleScriptFunc(handler(self, self.onRestoreAcceleratedEnergyTimeout), 0.5, false)
 end
@@ -189,6 +195,8 @@ function Snake:stopRestoreAcceleratedEnergy()
     if(self.restoreTimerID == 0) then
         return
     end
+
+    print("stop restore energy!!!!")
     local scheduler=cc.Director:getInstance():getScheduler()
     scheduler:unscheduleScriptEntry(self.restoreTimerID)
     self.restoreTimerID = 0
@@ -211,6 +219,8 @@ function Snake:startConsumeEnergy()
     if(self.consumeTimerID ~= 0) then
         return
     end
+
+    print("start consume energy!!!!")
     local scheduler = cc.Director:getInstance():getScheduler()
     self.consumeTimerID = scheduler:scheduleScriptFunc(handler(self, self.onConsumeEnergyTimeout), 0.5, false)
 end
@@ -220,6 +230,8 @@ function Snake:stopConsumeEnergy()
     if(self.consumeTimerID == 0) then
         return
     end
+
+    print("stop consume energy!!!!")
     local scheduler=cc.Director:getInstance():getScheduler()
     scheduler:unscheduleScriptEntry(self.consumeTimerID)
     self.consumeTimerID = 0
