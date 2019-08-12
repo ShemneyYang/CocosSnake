@@ -33,4 +33,34 @@ function CommonUtility:getRandomCoordinates()
     return math.random(-nBoundX, nBoundX), math.random(-nBoundY, nBoundY)
 end
 
+--根据坐标点（x,y）和前进方向的角度rotation, 向前走step的距离得到的坐标点
+function CommonUtility:calculateCoordinatesByStep(x, y, rotation, step)
+    if(step <= 1 and step >= 1) then
+        return x, y
+    end
+    local posX = 0
+    local posY = 0
+    local temp = math.rad(rotation) --计算弧度
+    if(rotation < 90) then
+        posX = x - (math.cos(temp) * step)
+        posY = y + (math.sin(temp) * step)
+    elseif(rotation < 180) then
+        temp = math.rad(180 - rotation)
+        posX = x + (math.cos(temp) * step)
+        posY = y + (math.sin(temp) * step)
+    elseif(rotation < 270) then
+        temp = math.rad(rotation - 180)
+        posX = x + (math.cos(temp) * step)
+        posY = y - (math.sin(temp) * step)
+    elseif(rotation < 360) then
+        temp = math.rad(360 - rotation)
+        posX = x - (math.cos(temp) * step)
+        posY = y - (math.sin(temp) * step)
+    else
+        posX = x - step
+        posY = y
+    end
+    return posX, posY
+end
+
 return CommonUtility

@@ -9,7 +9,7 @@ function Object:ctor(node)
     self.x = 0
     self.y = 0
     self.sprite = nil
-    self.rotation = 360
+    self.rotation = 0
 end
 
 function Object:createWithSpriteFrameName(name)
@@ -49,34 +49,11 @@ function Object:turnRotation(value)
 end
 
 function Object:move(step)
-    if(step <= 1) then
-        return
-    end
-    local posX = 0
-    local posY = 0
-    local temp = math.rad(self.rotation)
-    if(self.rotation < 90) then
-        posX = self.x - (math.cos(temp) * step)
-        posY = self.y + (math.sin(temp) * step)
-    elseif(self.rotation < 180) then
-        temp = math.rad(180 - self.rotation)
-        posX = self.x + (math.cos(temp) * step)
-        posY = self.y + (math.sin(temp) * step)
-    elseif(self.rotation < 270) then
-        temp = math.rad(self.rotation - 180)
-        posX = self.x + (math.cos(temp) * step)
-        posY = self.y - (math.sin(temp) * step)
-    elseif(self.rotation < 360) then
-        temp = math.rad(360 - self.rotation)
-        posX = self.x - (math.cos(temp) * step)
-        posY = self.y - (math.sin(temp) * step)
-    else
-        posX = self.x - step
-        posY = self.y
-    end
+    local posX, posY = CommonUtility:calculateCoordinatesByStep(self.x, self.y, self.rotation, step)
     self:setPos(posX, posY)
 end
 
+--复制object的坐标和角度
 function Object:followPos(object)
     self:setPos(object.x, object.y)
     self:setRotation(object.rotation)

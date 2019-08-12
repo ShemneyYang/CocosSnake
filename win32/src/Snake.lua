@@ -18,7 +18,7 @@ function Snake:ctor(node)
     self.moveTimerInterval = 0.05
 
     --初始化三节身体.
-    for i = 1, 100 do
+    for i = 1, 10 do
         self:grow()
     end
 end
@@ -40,28 +40,18 @@ end
 
 --长长一节身体
 function Snake:grow()
-    local x, y, tailWidth, tailHeight = self:getTailPos()
+    local x, y, tailWidth, tailHeight, rotation = self:getTailNodeInfo()
     --print("tailPos x=", x, ",y=", y, ",w=", tailWidth, ",h=", tailHeight)
     local body = SnakeBody.new(self, self.node, #self.bodyArray + 1)
     table.insert(self.bodyArray, body)
     local width, height = body:getSize()
 
-    --精灵默认锚点是中心, 要特殊处理一下.
-    --[[
-    if direction == "left" then
-        x = x + (width/2) + (tailWidth/2)
-    elseif direction == "right" then
-        x = x - (width/2) - (tailWidth/2)
-    elseif direction == "up" then
-        y = y - (height/2) - (tailHeight/2)
-    elseif direction == "down" then
-        y = y + (height/2) + (tailHeight/2)
-    end
-    ]]
-    --todo.
-    x = x + (width/2) + (tailWidth/2)
-    --print("pos x=", x, ",y=", y)
-    body:setPos(x, y)
+    local len = (width/2) + (tailWidth/2)
+    print("x=", x, ",y=", y, ",rotation=", rotation, ",step=", -len)
+    local newX, newY = CommonUtility:calculateCoordinatesByStep(x, y, rotation, -len)
+    print("newX=", newX, ",newY=", newY)
+    body:setRotation(rotation)
+    body:setPos(newX, newY)
     body:show()
     --body:startAnimation()
 end
@@ -77,24 +67,14 @@ function Snake:getHeadCoordinate()
 end
 
 --获取尾部坐标
-function Snake:getTailPos()
+function Snake:getTailNodeInfo()
     if #self.bodyArray == 0 then
         local x, y = CommonUtility:getCenterPos()
-        return x, y, 0, 0
+        return x, y, 0, 0, 0
     else
         local body = self.bodyArray[#self.bodyArray]
         local width, height = body:getSize()
-        return body.x, body.y, width, height
-    end
-end
-
---获取尾部方向
-function Snake:getTailDirection()
-    if #self.bodyArray == 0 then
-        return "left"
-    else
-        local body = self.bodyArray[#self.bodyArray]
-        return body.direction
+        return body.x, body.y, width, height, body.rotation
     end
 end
 

@@ -2,8 +2,6 @@
 local CommonUtility = require("CommonUtility")
 local Object = require("Object")
 
-local DirectionRotation = {["left"] = 0, ["right"] = 180, ["up"] = 90, ["down"] = 270}
-
 local SnakeBody = class("SnakeBody", Object)
 
 function SnakeBody:ctor(snake, node, index)
@@ -42,12 +40,6 @@ function SnakeBody:startAnimation()
     local animation = cc.Animation:createWithSpriteFrames(frameList, 0.1, 6)
     local animate = cc.Animate:create(animation)
     self.sprite:runAction(animate);
-end
-
-function SnakeBody:setDirection(dir)
-    --[[
-    self.direction = dir
-    self.sprite:setRotation(DirectionRotation[dir])]]
 end
 
 return SnakeBody
