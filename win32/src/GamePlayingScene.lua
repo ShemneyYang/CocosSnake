@@ -13,7 +13,7 @@ function GamePlayingScene:onEnter()
     print("GamePlayingScene:onEnter")
     self.snake = Snake.new(self)
     self.snake:startMove()
-    --self.frogFactory = FrogFactory.new(self, 5)
+    self.frogFactory = FrogFactory.new(self, 5) --创建青蛙工厂.
 
     local listener = cc.EventListenerKeyboard:create()
     listener:registerScriptHandler(handler(self, self.onKeyPressed), cc.Handler.EVENT_KEYBOARD_PRESSED)

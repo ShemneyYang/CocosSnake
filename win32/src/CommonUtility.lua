@@ -28,9 +28,9 @@ function CommonUtility:getRandomCoordinates()
     math.randomseed(cc.exports.randomSeed)
     cc.exports.randomSeed = cc.exports.randomSeed + 1
     local visibleSize = cc.Director:getInstance():getVisibleSize()
-    local nBoundX = math.modf(visibleSize.width / 2 / GridSize) - 1
-    local nBoundY = math.modf(visibleSize.height / 2 / GridSize) - 1
-    return math.random(-nBoundX, nBoundX), math.random(-nBoundY, nBoundY)
+    local nBoundX = visibleSize.width - 1
+    local nBoundY = visibleSize.height - 1
+    return math.random(1, nBoundX), math.random(1, nBoundY)
 end
 
 --根据坐标点（x,y）和前进方向的角度rotation, 向前走step的距离得到的坐标点
